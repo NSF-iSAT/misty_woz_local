@@ -36,6 +36,7 @@ def led(robot, color):
     elif color == "blue":
         robot.changeLED(0, 0, 255)
 
+#TODO implement
 def speak(robot, ssml_string):
     print("Speak", ssml_string)
     pass
@@ -58,7 +59,7 @@ def main(misty_ip):
     speak_input = [
         [sg.Text("Text to Speech")],
         [sg.Input(size=(50, 5), enable_events=True, key="-TTS-")],
-        [sg.Button("Speak", ), sg.Button("Clear")]
+        [sg.Button("Speak", key = "SPEAK"), sg.Button("Clear", key = "CLEAR")]
     ]
 
     led_control = [
@@ -83,6 +84,8 @@ def main(misty_ip):
         "LED_RED": lambda: led(robot, "red"),
         "LED_GREEN": lambda: led(robot, "green"),
         "LED_BLUE": lambda: led(robot, "blue"),
+        "SPEAK": lambda: speak(robot, "placeholder for speak"),
+        "CLEAR": lambda: speak(robot, "placeholder for clear")
     }
 
     while True:
