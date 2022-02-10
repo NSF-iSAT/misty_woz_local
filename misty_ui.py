@@ -1,23 +1,52 @@
 from os import scandir
 import PySimpleGUI as sg
 from misty_scan import initial_ip_scan_window as misty_ip_scan
-from mistyPy import Robot
+from kaleb_mistyPy import Robot
 
-# TODO implement
 def tilt(robot, direction):
     print("TILT", direction)
+    if direction == "left": # house left
+        # parameter order: roll, pitch, yaw, velocity
+        robot.moveHeadPosition(5, 0, 0, 10)
+    elif direction == "right": # house right
+        robot.moveHeadPosition(-5, 0, 0, 10)
 
 def look(robot, direction):
     print("LOOK", direction)
+    if direction == "up": # negative pitch
+        # parameter order: roll, pitch, yaw, velocity
+        robot.moveHeadPosition(0, -5, 0, 10)
+    elif direction == "down":
+        robot.moveHeadPosition(0, 5, 0, 10)
+    elif direction == "left": # house left, negative yaw
+        robot.moveHeadPosition(0, 0, -5, 10)
+    elif direction == "right": # house right
+        # doesn't go as far right as left
+        # looks like 45 degree yaw, versus 90 degree yaw seen with "left"
+        robot.moveHeadPosition(0, 0, 5, 10)
+    elif direction == "straight":
+        robot.moveHeadPosition(0, 0, 0, 10)
 
 def led(robot, color):
     print("LED", color)
+    if color == "red":
+        robot.changeLED(255, 0, 0)
+    elif color == "green":
+        robot.changeLED(0, 255, 0)
+    elif color == "blue":
+        robot.changeLED(0, 0, 255)
+
+#TODO implement
+def speak(robot, ssml_string):
+    print("Speak", ssml_string)
+    pass
 
 # # # # # 
 
 def main(misty_ip):
-    robot = None
+    # robot = None
     # robot = Robot(misty_ip)
+    robot = Robot('10.200.192.135')
     
 
     head_controls = [
@@ -30,7 +59,7 @@ def main(misty_ip):
     speak_input = [
         [sg.Text("Text to Speech")],
         [sg.Input(size=(50, 5), enable_events=True, key="-TTS-")],
-        [sg.Button("Speak", ), sg.Button("Clear")]
+        [sg.Button("Speak", key = "SPEAK"), sg.Button("Clear", key = "CLEAR")]
     ]
 
     led_control = [
@@ -55,6 +84,8 @@ def main(misty_ip):
         "LED_RED": lambda: led(robot, "red"),
         "LED_GREEN": lambda: led(robot, "green"),
         "LED_BLUE": lambda: led(robot, "blue"),
+        "SPEAK": lambda: speak(robot, "placeholder for speak"),
+        "CLEAR": lambda: speak(robot, "placeholder for clear")
     }
 
     while True:
