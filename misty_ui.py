@@ -36,10 +36,23 @@ def led(robot, color):
     elif color == "blue":
         robot.changeLED(0, 0, 255)
 
-#TODO implement
+# TODO
 def speak(robot, ssml_string):
     print("Speak", ssml_string)
     pass
+
+# TODO
+def move_arms(robot, arm, move):
+    # NOTE: feel free to change the input vars -- just adjust the functions_mapping entry accordingly
+    pass
+
+# TODO
+def set_expression(robot, expression):
+    # NOTE: one nice feature for this function would be to add a "duration" parameter
+    #      so that the expression can be set for a certain amount of time (or forever)
+    #      and then revert to a "default" expression
+    pass
+
 
 # # # # # 
 
@@ -67,6 +80,14 @@ def main(misty_ip):
         [sg.Button("RED", key = "LED_RED"), sg.Button("GREEN", key = "LED_GREEN"), sg.Button("BLUE", key = "LED_BLUE")]
     ]
 
+    # TODO add GUI for arms
+
+    # TODO add GUI for changing expression
+
+    # TODO: add display window for robot camera
+        # (this can be in the PySimpleGUI window, or in a separate window -- coder's choice :))
+        # https://docs.opencv.org/4.x/d6/d00/tutorial_py_root.html
+
     layout = [
         [sg.Column([[sg.Column(head_controls)],[sg.Column(speak_input)], [sg.Column(led_control)]])],
     ]
@@ -84,8 +105,8 @@ def main(misty_ip):
         "LED_RED": lambda: led(robot, "red"),
         "LED_GREEN": lambda: led(robot, "green"),
         "LED_BLUE": lambda: led(robot, "blue"),
-        "SPEAK": lambda: speak(robot, "placeholder for speak"),
-        "CLEAR": lambda: speak(robot, "placeholder for clear")
+        # TODO events and mapping for arms
+        # TODO events and mapping for expression
     }
 
     while True:
@@ -99,10 +120,14 @@ def main(misty_ip):
         
         if event == "Speak" and values["-TTS-".strip()]:
             print("TTS : ", values["-TTS-"])
-            # TODO implement
+            speak(robot, values["-TTS-"])
 
         if event == "Clear":
             window["-TTS-"].update("")
+
+        # TODO add event names for arms
+
+        # TODO add event names for expression
 
     window.close()
 
