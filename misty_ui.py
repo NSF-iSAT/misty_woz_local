@@ -62,8 +62,8 @@ def set_expression(robot, expression):
                  "anger": 'e_Anger.jpg',
                  "apprehension": 'e_ApprehensionConcerned.jpg',
                  "contempt": 'e_Contempt.jpg',
-                 "contentLeft": 'e_ContentLeft.jpg',
-                 "contentRight": 'e_ContentRight.jpg',
+                 "contentLeft": 'e_ContentLeft.jpg', #stage left
+                 "contentRight": 'e_ContentRight.jpg', #stage right
                  "default": 'e_DefaultContent.jpg',
                  "disgust": 'e_Disgust.jpg',
                  "disorientated": 'e_Disoriented.jpg',
@@ -99,8 +99,8 @@ def set_expression(robot, expression):
                  "logoPrompt": 'e_SystemLogoPrompt.jpg',
                  "terror1": 'e_Terror.jpg',
                  "terror2": 'e_Terror2.jpg',
-                 "terrorLeft": 'e_TerrorLeft.jpg',
-                 "terrorRight": 'e_TerrorRight.jpg'
+                 "terrorLeft": 'e_TerrorLeft.jpg', #stage left
+                 "terrorRight": 'e_TerrorRight.jpg' #stage right
                 }
 
     print("Show", expression, "expression")
