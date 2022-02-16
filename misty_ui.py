@@ -52,15 +52,59 @@ def set_expression(robot, expression):
     # NOTE: one nice feature for this function would be to add a "duration" parameter
     #      so that the expression can be set for a certain amount of time (or forever)
     #      and then revert to a "default" expression
-    if expression == "default":
-        print("show default expression")
-        robot.changeImage('e_DefaultContent.jpg')
-    elif expression == "love":
-        print("show love expression")
-        robot.changeImage('e_Love.jpg')
-    elif expression == "my_expression":
-        print("my_expression is:", expression)
-    pass
+    # used robot.printImageList() to get list of saved images
+    # use a dictionary instead of if/elif statement
+    # dictionary maps key word to full jpg file name of expression
+    
+    expr_dict = {"admiration": 'e_Admiration.jpg',
+                 "aggressive": 'e_Aggressiveness.jpg',
+                 "amazement": 'e_Amazement.jpg',
+                 "anger": 'e_Anger.jpg',
+                 "apprehension": 'e_ApprehensionConcerned.jpg',
+                 "contempt": 'e_Contempt.jpg',
+                 "contentLeft": 'e_ContentLeft.jpg',
+                 "contentRight": 'e_ContentRight.jpg',
+                 "default": 'e_DefaultContent.jpg',
+                 "disgust": 'e_Disgust.jpg',
+                 "disorientated": 'e_Disoriented.jpg',
+                 "fear": 'e_Fear.jpg',
+                 "grief": 'e_Grief.jpg',
+                 "hilarious": 'e_EcstacyHilarious.jpg',
+                 "joy1": 'e_Joy.jpg',
+                 "joy2": 'e_Joy2.jpg',
+                 "joyGoofy1": 'e_JoyGoofy.jpg',
+                 "joyGoofy2": 'e_JoyGoofy2.jpg',
+                 "joyGoofy3": 'e_JoyGoofy3.jpg',
+                 "love": 'e_Love.jpg',
+                 "rage1": 'e_Rage.jpg',
+                 "rage2": 'e_Rage2.jpg',
+                 "rage3": 'e_Rage3.jpg',
+                 "rage4": 'e_Rage4.jpg',
+                 "remorse": 'e_RemorseShame.jpg',
+                 "sadness": 'e_Sadness.jpg',
+                 "sleeping": 'e_Sleeping.jpg',
+                 "sleepingZZZ": 'e_SleepingZZZ.jpg',
+                 "sleepy1": 'e_Sleepy.jpg',
+                 "sleep2": 'e_Sleepy2.jpg',
+                 "sleep3": 'e_Sleepy3.jpg',
+                 "sleep4": 'e_Sleepy4.jpg',
+                 "starryEyed": 'e_EcstacyStarryEyed.jpg',
+                 "surprise": 'e_Surprise.jpg',
+                 "blackScreen": 'e_SystemBlackScreen.jpg',
+                 "blinkingLarge": 'e_SystemBlinkLarge.jpg',
+                 "blinkingStandard": 'e_SystemBlinkStandard.jpg',
+                 "camera": 'e_SystemCamera.jpg',
+                 "flash": 'e_SystemFlash.jpg',
+                 "gearPrompt": 'e_SystemGearPrompt.jpg',
+                 "logoPrompt": 'e_SystemLogoPrompt.jpg',
+                 "terror1": 'e_Terror.jpg',
+                 "terror2": 'e_Terror2.jpg',
+                 "terrorLeft": 'e_TerrorLeft.jpg',
+                 "terrorRight": 'e_TerrorRight.jpg'
+                }
+
+    print("Show", expression, "expression")
+    robot.changeImage(expr_dict.get(expression))
 
 # # # # # 
 
@@ -94,11 +138,57 @@ def main(misty_ip):
         [sg.Button("Left Arm"), sg.Button("Right Arm")]
     ]
 
-    # TODO add GUI for changing expression
-    # trying to use pySimplyGUI combo to make a drop down list
+    # GUI drop down menu to change Misty face expression
+    # enable_events=True means that when a drop down menu item
+    # is selected, then the face changes automatically
     expression_list = [
         [sg.Text("Face Expression")],
-        [sg.Combo(["default", "love"], enable_events=True, key = "my_expression")]
+        [sg.Combo(["admiration",
+                   "aggressive",
+                   "amazement",
+                   "anger",
+                   "apprehension",
+                   "contempt",
+                   "contentLeft",
+                   "contentRight",
+                   "default",
+                   "disgust",
+                   "disorientated",
+                   "fear",
+                   "grief",
+                   "hilarious",
+                   "joy1",
+                   "joy2",
+                   "joyGoofy1",
+                   "joyGoofy2",
+                   "joyGoofy3",
+                   "love",
+                   "rage1",
+                   "rage2",
+                   "rage3",
+                   "rage4",
+                   "remorse",
+                   "sadness",
+                   "sleeping",
+                   "sleepingZZZ",
+                   "sleepy1",
+                   "sleep2",
+                   "sleep3",
+                   "sleep4",
+                   "starryEyed",
+                   "surprise",
+                   "blackScreen",
+                   "blinkingLarge",
+                   "blinkingStand",
+                   "camera",
+                   "flash",
+                   "gearPrompt",
+                   "logoPrompt",
+                   "terror1",
+                   "terror2",
+                   "terrorLeft",
+                   "terrorRight"],
+                  enable_events=True, key = "my_expression")]
     ]
 
     # TODO: add display window for robot camera
@@ -147,7 +237,7 @@ def main(misty_ip):
 
         # TODO add event names for arms
 
-        # TODO add event names for expression
+        # event names for expression
         if event == "my_expression":
             set_expression(robot, values["my_expression"])
 
