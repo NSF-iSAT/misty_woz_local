@@ -47,7 +47,7 @@ def move_arms(robot, arm, move):
     # NOTE: feel free to change the input vars -- just adjust the functions_mapping entry accordingly
     if arm == "both": # move both arms
         # parameters for moveArms(self, rightArmPosition, leftArmPosition, rightArmVelocity, leftArmVelocity, units)
-        print(arm, move)
+        print("move", arm, "arm", move)
         if move == "up":
             robot.moveArms(10, 10, 10, 10, units = "position")
         elif move == "down":
@@ -55,9 +55,14 @@ def move_arms(robot, arm, move):
         elif move == "straight":
             robot.moveArms(5, 5, 10, 10, units = "position")
     else: # move one arm
-        #TODO: implement
-        pass
-    pass
+        # parameters for moveArm(self, arm, position, velocity, units)
+        print("move", arm, "arm", move)
+        if move == "up":
+            robot.moveArm(arm, 10, 10, "position")
+        elif move == "down":
+            robot.moveArm(arm, 0, 10, "position")
+        elif move == "straight":
+            robot.moveArm(arm, 5, 10, "position")
 
 # TODO
 def set_expression(robot, expression):
@@ -147,7 +152,15 @@ def main(misty_ip):
     # TODO add GUI for arms
     arm_control = [
         [sg.Text("Arms")],
-        [sg.Button("Arms Up", key = "ARMS_UP"), sg.Button("Arms Down", key = "ARMS_DOWN"), sg.Button("Arms Straight", key = "ARMS_STRAIGHT")]
+        [sg.Button("Arms Up", key = "ARMS_UP"),
+            sg.Button("Arms Down", key = "ARMS_DOWN"),
+            sg.Button("Arms Straight", key = "ARMS_STRAIGHT"),
+            sg.Button("Left Arm Up", key = "LEFT_ARM_UP"),
+            sg.Button("Left Arm Down", key = "LEFT_ARM_DOWN"),
+            sg.Button("Left Arm Straight", key = "LEFT_ARM_STRAIGHT"),
+            sg.Button("Right Arm Up", key = "RIGHT_ARM_UP"),
+            sg.Button("Right Arm Down", key = "RIGHT_ARM_DOWN"),
+            sg.Button("Right Arm Straight", key = "RIGHT_ARM_STRAIGHT")]
     ]
 
     # GUI drop down menu to change Misty face expression
@@ -230,9 +243,18 @@ def main(misty_ip):
         "LED_GREEN": lambda: led(robot, "green"),
         "LED_BLUE": lambda: led(robot, "blue"),
         # TODO events and mapping for arms
+        # both arms
         "ARMS_UP": lambda: move_arms(robot, "both", "up"),
         "ARMS_DOWN": lambda: move_arms(robot, "both", "down"),
         "ARMS_STRAIGHT": lambda: move_arms(robot, "both", "straight"),
+        # left arm, stage left
+        "LEFT_ARM_UP": lambda: move_arms(robot, 'left', "up"),
+        "LEFT_ARM_DOWN": lambda: move_arms(robot, 'left', "down"),
+        "LEFT_ARM_STRAIGHT": lambda: move_arms(robot, 'left', "straight"),
+        # right arm, stage right
+        "RIGHT_ARM_UP": lambda: move_arms(robot, 'right', "up"),
+        "RIGHT_ARM_DOWN": lambda: move_arms(robot, 'right', "down"),
+        "RIGHT_ARM_STRAIGHT": lambda: move_arms(robot, 'right', "straight"),
     }
 
     while True:
