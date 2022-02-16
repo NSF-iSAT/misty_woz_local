@@ -45,6 +45,18 @@ def speak(robot, ssml_string):
 # TODO
 def move_arms(robot, arm, move):
     # NOTE: feel free to change the input vars -- just adjust the functions_mapping entry accordingly
+    if arm == "both": # move both arms
+        print(arm, move)
+        if move == "up":
+#            robot.moveArms(rightArmPosition, leftArmPosition, rightArmVelocity, leftArmVelocity, units = "degrees")
+            pass
+        elif move == "down":
+            pass
+        elif move == "straight":
+            pass
+    else: # move one arm
+        #TODO: implement
+        pass
     pass
 
 # TODO
@@ -135,10 +147,11 @@ def main(misty_ip):
     # TODO add GUI for arms
     arm_control = [
         [sg.Text("Arms")],
-        [sg.Button("Left Arm"), sg.Button("Right Arm")]
+        [sg.Button("Arms Up", key = "ARMS_UP"), sg.Button("Arms Down", key = "ARMS_DOWN"), sg.Button("Arms Straight", key = "ARMS_STRAIGHT")]
     ]
 
     # GUI drop down menu to change Misty face expression
+    # resource: https://csveda.com/python-combo-and-listbox-with-pysimplegui/
     # enable_events=True means that when a drop down menu item
     # is selected, then the face changes automatically
     expression_list = [
@@ -217,6 +230,9 @@ def main(misty_ip):
         "LED_GREEN": lambda: led(robot, "green"),
         "LED_BLUE": lambda: led(robot, "blue"),
         # TODO events and mapping for arms
+        "ARMS_UP": lambda: move_arms(robot, "both", "up"),
+        "ARMS_DOWN": lambda: move_arms(robot, "both", "down"),
+        "ARMS_STRAIGHT": lambda: move_arms(robot, "both", "straight"),
     }
 
     while True:
