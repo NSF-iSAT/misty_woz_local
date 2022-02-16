@@ -36,14 +36,8 @@ def led(robot, color):
     elif color == "blue":
         robot.changeLED(0, 0, 255)
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
 #TODO implement
->>>>>>> ce48eec8a0d3ddf34e40594e27d804edfd5212c6
-=======
 # TODO
->>>>>>> main
 def speak(robot, ssml_string):
     print("Speak", ssml_string)
     pass
@@ -58,15 +52,22 @@ def set_expression(robot, expression):
     # NOTE: one nice feature for this function would be to add a "duration" parameter
     #      so that the expression can be set for a certain amount of time (or forever)
     #      and then revert to a "default" expression
+    if expression == "default":
+        print("show default expression")
+        robot.changeImage('e_DefaultContent.jpg')
+    elif expression == "love":
+        print("show love expression")
+        robot.changeImage('e_Love.jpg')
+    elif expression == "my_expression":
+        print("my_expression is:", expression)
     pass
-
 
 # # # # # 
 
 def main(misty_ip):
     # robot = None
     # robot = Robot(misty_ip)
-    robot = Robot('10.200.192.135')
+    robot = Robot('10.200.195.151')
     
 
     head_controls = [
@@ -88,20 +89,32 @@ def main(misty_ip):
     ]
 
     # TODO add GUI for arms
+    arm_control = [
+        [sg.Text("Arms")],
+        [sg.Button("Left Arm"), sg.Button("Right Arm")]
+    ]
 
     # TODO add GUI for changing expression
+    # trying to use pySimplyGUI combo to make a drop down list
+    expression_list = [
+        [sg.Text("Face Expression")],
+        [sg.Combo(["default", "love"], enable_events=True, key = "my_expression")]
+    ]
 
     # TODO: add display window for robot camera
         # (this can be in the PySimpleGUI window, or in a separate window -- coder's choice :))
         # https://docs.opencv.org/4.x/d6/d00/tutorial_py_root.html
 
     layout = [
-        [sg.Column([[sg.Column(head_controls)],[sg.Column(speak_input)], [sg.Column(led_control)]])],
+        [sg.Column([[sg.Column(head_controls)],[sg.Column(speak_input)],
+        [sg.Column(led_control)],[sg.Column(arm_control)],
+        [sg.Column(expression_list)]])],
     ]
 
     window = sg.Window("Misty UI", layout)
 
     functions_mapping = {
+        # events and mapping for head
         "TILT_LEFT": lambda: tilt(robot, "left"),
         "TILT_RIGHT": lambda: tilt(robot, "right"),
         "LOOK_UP": lambda: look(robot, "up"),
@@ -109,11 +122,11 @@ def main(misty_ip):
         "LOOK_LEFT": lambda: look(robot, "left"),
         "LOOK_RIGHT": lambda: look(robot, "right"),
         "LOOK_STRAIGHT": lambda: look(robot, "straight"),
+        # events and mapping for LED color
         "LED_RED": lambda: led(robot, "red"),
         "LED_GREEN": lambda: led(robot, "green"),
         "LED_BLUE": lambda: led(robot, "blue"),
         # TODO events and mapping for arms
-        # TODO events and mapping for expression
     }
 
     while True:
@@ -135,6 +148,8 @@ def main(misty_ip):
         # TODO add event names for arms
 
         # TODO add event names for expression
+        if event == "my_expression":
+            set_expression(robot, values["my_expression"])
 
     window.close()
 
