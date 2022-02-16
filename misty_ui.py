@@ -46,14 +46,14 @@ def speak(robot, ssml_string):
 def move_arms(robot, arm, move):
     # NOTE: feel free to change the input vars -- just adjust the functions_mapping entry accordingly
     if arm == "both": # move both arms
+        # parameters for moveArms(self, rightArmPosition, leftArmPosition, rightArmVelocity, leftArmVelocity, units)
         print(arm, move)
         if move == "up":
-#            robot.moveArms(rightArmPosition, leftArmPosition, rightArmVelocity, leftArmVelocity, units = "degrees")
-            pass
+            robot.moveArms(10, 10, 10, 10, units = "position")
         elif move == "down":
-            pass
+            robot.moveArms(0, 0, 10, 10, units = "position")
         elif move == "straight":
-            pass
+            robot.moveArms(5, 5, 10, 10, units = "position")
     else: # move one arm
         #TODO: implement
         pass
