@@ -2,6 +2,7 @@ from os import scandir
 import PySimpleGUI as sg
 from misty_scan import initial_ip_scan_window as misty_ip_scan
 from kaleb_mistyPy import Robot
+import cv2
 
 def tilt(robot, direction):
     print("TILT", direction)
@@ -128,8 +129,17 @@ def set_expression(robot, expression):
 def main(misty_ip):
     # robot = None
     # robot = Robot(misty_ip)
-    robot = Robot('10.200.195.151')
+    misty_ip = '10.200.193.105'
+    robot = Robot(misty_ip)
+    # av streaming source: https://github.com/CPsridharCP/MistySkills/blob/master/Apps/Teleop/02_pythonTeleop/mistyTeleop.py
+    robot.startAvStream(url='rtspd:1935', dimensions=(640, 480))
+    #cap = cv2.VideoCapture('rtsp://' + misty_ip + ':1935')
+    cap = cv2.VideoCapture("rtsp://10.200.193.105:1935")
     
+    video_feed = [
+        [sg.Text("Video Feed", size=(60, 1), justification="center")],
+        [sg.Image(filename="", key="-IMAGE-")]
+    ]
 
     head_controls = [
         [sg.Text("Look")],
@@ -222,6 +232,7 @@ def main(misty_ip):
         # https://docs.opencv.org/4.x/d6/d00/tutorial_py_root.html
 
     layout = [
+        [sg.Column(video_feed)],
         [sg.Column([[sg.Column(head_controls)],[sg.Column(speak_input)],
         [sg.Column(led_control)],[sg.Column(arm_control)],
         [sg.Column(expression_list)]])],
@@ -278,6 +289,18 @@ def main(misty_ip):
         # event names for expression
         if event == "my_expression":
             set_expression(robot, values["my_expression"])
+        
+        # video functionality
+#        ret, frame = cap.read()
+#        frame = cv2.rotate(frame, cv2.ROTATE_90_CLOCKWISE)
+#        imgbytes = cv2.imencode(".png", frame)[1].tobytes()
+#        window["-IMAGE-"].update(data=imgbytes)
+#        cv2.imshow("frame", frame)
+#        cv2.waitKey(0)
+        
+    cap.release()
+    cv2.destroyAllWindows()
+    robot.stopAvStream()
 
     window.close()
 
