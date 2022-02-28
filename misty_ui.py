@@ -3,6 +3,7 @@ import PySimpleGUI as sg
 from misty_scan import initial_ip_scan_window as misty_ip_scan
 from kaleb_mistyPy import Robot
 import cv2
+import time
 
 def tilt(robot, direction):
     print("TILT", direction)
@@ -135,6 +136,10 @@ def main(misty_ip):
     robot.startAvStream(url='rtspd:1935', dimensions=(640, 480))
     #cap = cv2.VideoCapture('rtsp://' + misty_ip + ':1935')
     cap = cv2.VideoCapture("rtsp://10.200.193.105:1935")
+    if not(cap.isOpened()):
+        print("cannot open rtsp")
+    
+    time.sleep(1)
     
     video_feed = [
         [sg.Text("Video Feed", size=(60, 1), justification="center")],
@@ -291,12 +296,18 @@ def main(misty_ip):
             set_expression(robot, values["my_expression"])
         
         # video functionality
-#        ret, frame = cap.read()
-#        frame = cv2.rotate(frame, cv2.ROTATE_90_CLOCKWISE)
-#        imgbytes = cv2.imencode(".png", frame)[1].tobytes()
-#        window["-IMAGE-"].update(data=imgbytes)
-#        cv2.imshow("frame", frame)
-#        cv2.waitKey(0)
+
+        ret, frame = cap.read()
+        if(ret == False):
+            #print("frame is empty")
+            pass
+        else:
+            print("ret is True")
+            frame = cv2.rotate(frame, cv2.ROTATE_90_CLOCKWISE)
+#            imgbytes = cv2.imencode(".png", frame)[1].tobytes()
+#            window["-IMAGE-"].update(data=imgbytes)
+            cv2.imshow("frame", frame)
+            cv2.waitKey(0)
         
     cap.release()
     cv2.destroyAllWindows()
