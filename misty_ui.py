@@ -133,13 +133,11 @@ def main(misty_ip):
     misty_ip = '10.200.193.105'
     robot = Robot(misty_ip)
     # av streaming source: https://github.com/CPsridharCP/MistySkills/blob/master/Apps/Teleop/02_pythonTeleop/mistyTeleop.py
-    robot.startAvStream(url='rtspd:1935', dimensions=(640, 480))
-    #cap = cv2.VideoCapture('rtsp://' + misty_ip + ':1935')
-    cap = cv2.VideoCapture("rtsp://10.200.193.105:1935")
+    robot.startAvStream(url='rtspd:1935')
+    time.sleep(2) #allows Misty to open up the stream before connecting to it
+    cap = cv2.VideoCapture('rtsp://' + misty_ip + ':1935')
     if not(cap.isOpened()):
         print("cannot open rtsp")
-    
-    time.sleep(1)
     
     video_feed = [
         [sg.Text("Video Feed", size=(60, 1), justification="center")],
@@ -302,7 +300,7 @@ def main(misty_ip):
             #print("frame is empty")
             pass
         else:
-            print("ret is True")
+            print("return is True")
             frame = cv2.rotate(frame, cv2.ROTATE_90_CLOCKWISE)
 #            imgbytes = cv2.imencode(".png", frame)[1].tobytes()
 #            window["-IMAGE-"].update(data=imgbytes)
