@@ -234,11 +234,21 @@ def main(misty_ip):
         # (this can be in the PySimpleGUI window, or in a separate window -- coder's choice :))
         # https://docs.opencv.org/4.x/d6/d00/tutorial_py_root.html
 
+#    layout = [
+#        [sg.Column(video_feed)],
+#        [sg.Column([[sg.Column(head_controls)],
+#        [sg.Column(speak_input)],
+#        [sg.Column(led_control)],[sg.Column(arm_control)],
+#        [sg.Column(expression_list)]])],
+#    ]
+#
     layout = [
-        [sg.Column(video_feed)],
-        [sg.Column([[sg.Column(head_controls)],[sg.Column(speak_input)],
-        [sg.Column(led_control)],[sg.Column(arm_control)],
-        [sg.Column(expression_list)]])],
+        [sg.Column(video_feed),sg.VSeperator(),
+        sg.Column([[sg.Column(head_controls)],
+                    [sg.Column(speak_input)],
+                    [sg.Column(led_control)],
+                    [sg.Column(arm_control)],
+                    [sg.Column(expression_list)]])]
     ]
 
     window = sg.Window("Misty UI", layout)
@@ -300,12 +310,12 @@ def main(misty_ip):
             #print("frame is empty")
             pass
         else:
-            print("return is True")
+            #print("return is True")
             frame = cv2.rotate(frame, cv2.ROTATE_90_CLOCKWISE)
-#            imgbytes = cv2.imencode(".png", frame)[1].tobytes()
-#            window["-IMAGE-"].update(data=imgbytes)
-            cv2.imshow("frame", frame)
-            cv2.waitKey(0)
+            imgbytes = cv2.imencode(".png", frame)[1].tobytes()
+            window["-IMAGE-"].update(data=imgbytes)
+#            cv2.imshow("frame", frame)
+#            cv2.waitKey(0)
         
     cap.release()
     cv2.destroyAllWindows()
