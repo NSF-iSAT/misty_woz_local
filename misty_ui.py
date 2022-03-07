@@ -38,13 +38,10 @@ def led(robot, color):
     elif color == "blue":
         robot.changeLED(0, 0, 255)
 
-#TODO implement
-# TODO
 def speak(robot, ssml_string):
-    print("Speak", ssml_string)
-    pass
+    print("Speak:", ssml_string)
+    robot.speak(ssml_string)
 
-# TODO
 def move_arms(robot, arm, move):
     # NOTE: feel free to change the input vars -- just adjust the functions_mapping entry accordingly
     if arm == "both": # move both arms
@@ -66,7 +63,6 @@ def move_arms(robot, arm, move):
         elif move == "straight":
             robot.moveArm(arm, 5, 10, "position")
 
-# TODO
 def set_expression(robot, expression):
     # NOTE: one nice feature for this function would be to add a "duration" parameter
     #      so that the expression can be set for a certain amount of time (or forever)
@@ -130,17 +126,21 @@ def set_expression(robot, expression):
 def main(misty_ip):
     # robot = None
     # robot = Robot(misty_ip)
-    misty_ip = '10.200.193.105'
+    misty_ip = '10.200.193.1'
     robot = Robot(misty_ip)
+    
     # av streaming source: https://github.com/CPsridharCP/MistySkills/blob/master/Apps/Teleop/02_pythonTeleop/mistyTeleop.py
-    robot.startAvStream(url='rtspd:1935')
+    robot.startAvStream(url='rtspd:1935', dimensions=(640, 480))
+    print("Starting Misty's camera")
     time.sleep(2) #allows Misty to open up the stream before connecting to it
     cap = cv2.VideoCapture('rtsp://' + misty_ip + ':1935')
     if not(cap.isOpened()):
         print("cannot open rtsp")
+        
+    robot.setDefaultVolume(10)
     
     video_feed = [
-        [sg.Text("Video Feed", size=(60, 1), justification="center")],
+        [sg.Text("Video Feed", size=(10, 1), justification="center")],
         [sg.Image(filename="", key="-IMAGE-")]
     ]
 
@@ -162,16 +162,15 @@ def main(misty_ip):
         [sg.Button("RED", key = "LED_RED"), sg.Button("GREEN", key = "LED_GREEN"), sg.Button("BLUE", key = "LED_BLUE")]
     ]
 
-    # TODO add GUI for arms
     arm_control = [
         [sg.Text("Arms")],
         [sg.Button("Arms Up", key = "ARMS_UP"),
             sg.Button("Arms Down", key = "ARMS_DOWN"),
-            sg.Button("Arms Straight", key = "ARMS_STRAIGHT"),
-            sg.Button("Left Arm Up", key = "LEFT_ARM_UP"),
+            sg.Button("Arms Straight", key = "ARMS_STRAIGHT")],
+        [sg.Button("Left Arm Up", key = "LEFT_ARM_UP"),
             sg.Button("Left Arm Down", key = "LEFT_ARM_DOWN"),
-            sg.Button("Left Arm Straight", key = "LEFT_ARM_STRAIGHT"),
-            sg.Button("Right Arm Up", key = "RIGHT_ARM_UP"),
+            sg.Button("Left Arm Straight", key = "LEFT_ARM_STRAIGHT")],
+        [sg.Button("Right Arm Up", key = "RIGHT_ARM_UP"),
             sg.Button("Right Arm Down", key = "RIGHT_ARM_DOWN"),
             sg.Button("Right Arm Straight", key = "RIGHT_ARM_STRAIGHT")]
     ]
@@ -266,7 +265,6 @@ def main(misty_ip):
         "LED_RED": lambda: led(robot, "red"),
         "LED_GREEN": lambda: led(robot, "green"),
         "LED_BLUE": lambda: led(robot, "blue"),
-        # TODO events and mapping for arms
         # both arms
         "ARMS_UP": lambda: move_arms(robot, "both", "up"),
         "ARMS_DOWN": lambda: move_arms(robot, "both", "down"),
@@ -290,11 +288,11 @@ def main(misty_ip):
             print("Actuation : ", event)
             functions_mapping[event]()
         
-        if event == "Speak" and values["-TTS-".strip()]:
+        if event == "SPEAK" and values["-TTS-".strip()]:
             print("TTS : ", values["-TTS-"])
             speak(robot, values["-TTS-"])
 
-        if event == "Clear":
+        if event == "CLEAR":
             window["-TTS-"].update("")
 
         # TODO add event names for arms
