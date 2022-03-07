@@ -137,7 +137,7 @@ def main(misty_ip):
     if not(cap.isOpened()):
         print("cannot open rtsp")
         
-    robot.setDefaultVolume(10)
+    robot.setDefaultVolume(5)
     
     video_feed = [
         [sg.Text("Video Feed", size=(10, 1), justification="center")],
@@ -289,7 +289,7 @@ def main(misty_ip):
             functions_mapping[event]()
         
         if event == "SPEAK" and values["-TTS-".strip()]:
-            print("TTS : ", values["-TTS-"])
+            #print("TTS : ", values["-TTS-"])
             speak(robot, values["-TTS-"])
 
         if event == "CLEAR":
