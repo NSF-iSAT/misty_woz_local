@@ -233,14 +233,6 @@ def main(misty_ip):
         # (this can be in the PySimpleGUI window, or in a separate window -- coder's choice :))
         # https://docs.opencv.org/4.x/d6/d00/tutorial_py_root.html
 
-#    layout = [
-#        [sg.Column(video_feed)],
-#        [sg.Column([[sg.Column(head_controls)],
-#        [sg.Column(speak_input)],
-#        [sg.Column(led_control)],[sg.Column(arm_control)],
-#        [sg.Column(expression_list)]])],
-#    ]
-#
     layout = [
         [sg.Column(video_feed),sg.VSeperator(),
         sg.Column([[sg.Column(head_controls)],
