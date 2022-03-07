@@ -121,6 +121,12 @@ def set_expression(robot, expression):
     print("Show", expression, "expression")
     robot.changeImage(expr_dict.get(expression))
 
+def get_speech(robot):
+    print("Misty is listening")
+    robot.captureSpeech()
+    print("Misty has stoped listening")
+
+
 # # # # # 
 
 def main(misty_ip):
@@ -228,6 +234,11 @@ def main(misty_ip):
                    "terrorRight"],
                   enable_events=True, key = "my_expression")]
     ]
+    
+    voice_controls = [
+        [sg.Text("Speech to Text")],
+        [sg.Button("Listen", key = "LISTEN", enable_events=True)]
+    ]
 
     # TODO: add display window for robot camera
         # (this can be in the PySimpleGUI window, or in a separate window -- coder's choice :))
@@ -237,6 +248,7 @@ def main(misty_ip):
         [sg.Column(video_feed),sg.VSeperator(),
         sg.Column([[sg.Column(head_controls)],
                     [sg.Column(speak_input)],
+                    [sg.Column(voice_controls)],
                     [sg.Column(led_control)],
                     [sg.Column(arm_control)],
                     [sg.Column(expression_list)]])]
@@ -292,9 +304,12 @@ def main(misty_ip):
         # event names for expression
         if event == "my_expression":
             set_expression(robot, values["my_expression"])
+            
+        # event for speech to text
+        if event == "LISTEN":
+            get_speech(robot)
         
         # video functionality
-
         ret, frame = cap.read()
         if(ret == False):
             #print("frame is empty")
