@@ -342,6 +342,12 @@ class Robot:
             "UtteranceID": uid
         }
         return requests.post("http://" + self.ip + "/api/tts/speak", json=json)
+        
+    def setDefaultVolume(self, volumeLevel):
+        json = {
+            "Volume": volumeLevel
+        }
+        return requests.post("http://" + self.ip + "/api/audio/volume", json=json)
     
     def captureSpeech(self, require_key_phrase=False, overwrite_existing=True, max_length = 7500, silence_timeout=5000):
         json = {
@@ -357,7 +363,7 @@ class Robot:
         """
         NOTE: to use Misty as her own media server, use rtspd:<port-number>
         """
-        assert dimensions in self.valid_stream_resolutions, "Invalid stream resolution"
+        #assert dimensions in self.valid_stream_resolutions, "Invalid stream resolution"
         resp = requests.post("http://"+self.ip+"/api/services/avstreaming/enable", json={})
         print(resp.json())
         json = {
