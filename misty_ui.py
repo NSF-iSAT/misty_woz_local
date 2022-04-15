@@ -143,7 +143,7 @@ def main(misty_ip):
     # if not(cap.isOpened()):
     #     print("cannot open rtsp")
         
-    robot.setDefaultVolume(5)
+    robot.setDefaultVolume(20)
     
     video_feed = [
         [sg.Text("Video Feed", size=(10, 1), justification="center")],
