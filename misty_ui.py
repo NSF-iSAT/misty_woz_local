@@ -2,9 +2,12 @@ from os import scandir
 import PySimpleGUI as sg
 from misty_scan import initial_ip_scan_window as misty_ip_scan
 from kaleb_mistyPy import Robot
+from google_tts import MistyGoogleTTS
+
 import cv2
 import time
 
+speech = None
 def tilt(robot, direction):
     print("TILT", direction)
     if direction == "left": # house left
@@ -40,7 +43,7 @@ def led(robot, color):
 
 def speak(robot, ssml_string):
     print("Speak:", ssml_string)
-    robot.speak(ssml_string)
+    speech.tts_callback(ssml_string)
 
 def move_arms(robot, arm, move):
     # NOTE: feel free to change the input vars -- just adjust the functions_mapping entry accordingly
@@ -48,20 +51,20 @@ def move_arms(robot, arm, move):
         # parameters for moveArms(self, rightArmPosition, leftArmPosition, rightArmVelocity, leftArmVelocity, units)
         print("move", arm, "arm", move)
         if move == "up":
-            robot.moveArms(10, 10, 80, 80, units = "position")
+            robot.MoveArms(10, 10, 80, 80, units = "position")
         elif move == "down":
-            robot.moveArms(0, 0, 80, 80, units = "position")
+            robot.MoveArms(0, 0, 80, 80, units = "position")
         elif move == "straight":
-            robot.moveArms(5, 5, 80, 80, units = "position")
+            robot.MoveArms(5, 5, 80, 80, units = "position")
     else: # move one arm
         # parameters for moveArm(self, arm, position, velocity, units)
         print("move", arm, "arm", move)
         if move == "up":
-            robot.moveArm(arm, 10, 80, "position")
+            robot.MoveArm(arm, 10, 80, "position")
         elif move == "down":
-            robot.moveArm(arm, 0, 80, "position")
+            robot.MoveArm(arm, 0, 80, "position")
         elif move == "straight":
-            robot.moveArm(arm, 5, 80, "position")
+            robot.MoveArm(arm, 5, 80, "position")
 
 def set_expression(robot, expression):
     # NOTE: one nice feature for this function would be to add a "duration" parameter
@@ -71,61 +74,92 @@ def set_expression(robot, expression):
     # use a dictionary instead of if/elif statement
     # dictionary maps key word to full jpg file name of expression
     
-    expr_dict = {"admiration": 'e_Admiration.jpg',
-                 "aggressive": 'e_Aggressiveness.jpg',
+    expr_dict = {
+                "DEFAULT" : "e_DefaultContent.jpg",
+                 "admiration": 'e_Admiration.jpg',
                  "amazement": 'e_Amazement.jpg',
                  "anger": 'e_Anger.jpg',
                  "apprehension": 'e_ApprehensionConcerned.jpg',
                  "contempt": 'e_Contempt.jpg',
                  "contentLeft": 'e_ContentLeft.jpg', #stage left
                  "contentRight": 'e_ContentRight.jpg', #stage right
-                 "default": 'e_DefaultContent.jpg',
-                 "disgust": 'e_Disgust.jpg',
-                 "disorientated": 'e_Disoriented.jpg',
                  "fear": 'e_Fear.jpg',
                  "grief": 'e_Grief.jpg',
                  "hilarious": 'e_EcstacyHilarious.jpg',
-                 "joy1": 'e_Joy.jpg',
-                 "joy2": 'e_Joy2.jpg',
-                 "joyGoofy1": 'e_JoyGoofy.jpg',
-                 "joyGoofy2": 'e_JoyGoofy2.jpg',
-                 "joyGoofy3": 'e_JoyGoofy3.jpg',
+                 "joy": 'e_Joy.jpg',
+                 "joyGoofy": 'e_JoyGoofy.jpg',
                  "love": 'e_Love.jpg',
-                 "rage1": 'e_Rage.jpg',
-                 "rage2": 'e_Rage2.jpg',
-                 "rage3": 'e_Rage3.jpg',
-                 "rage4": 'e_Rage4.jpg',
                  "remorse": 'e_RemorseShame.jpg',
                  "sadness": 'e_Sadness.jpg',
                  "sleeping": 'e_Sleeping.jpg',
-                 "sleepingZZZ": 'e_SleepingZZZ.jpg',
-                 "sleepy1": 'e_Sleepy.jpg',
-                 "sleepy2": 'e_Sleepy2.jpg',
-                 "sleepy3": 'e_Sleepy3.jpg',
-                 "sleepy4": 'e_Sleepy4.jpg',
+                 "sleepy": 'e_Sleepy.jpg',
                  "starryEyed": 'e_EcstacyStarryEyed.jpg',
                  "surprise": 'e_Surprise.jpg',
                  "blackScreen": 'e_SystemBlackScreen.jpg',
                  "blinkingLarge": 'e_SystemBlinkLarge.jpg',
                  "blinkingStandard": 'e_SystemBlinkStandard.jpg',
-                 "camera": 'e_SystemCamera.jpg',
-                 "flash": 'e_SystemFlash.jpg',
-                 "gearPrompt": 'e_SystemGearPrompt.jpg',
-                 "logoPrompt": 'e_SystemLogoPrompt.jpg',
-                 "terror1": 'e_Terror.jpg',
-                 "terror2": 'e_Terror2.jpg',
-                 "terrorLeft": 'e_TerrorLeft.jpg', #stage left
-                 "terrorRight": 'e_TerrorRight.jpg' #stage right
                 }
 
     print("Show", expression, "expression")
-    robot.changeImage(expr_dict.get(expression))
+    robot.DisplayImage(expr_dict.get(expression))
 
 def get_speech(robot):
     print("Misty is listening")
-    robot.captureSpeech()
-    print("Misty has stoped listening")
+    robot.captureSpeech() 
+    print("Misty has stopped listening")
 
+def nod(robot):
+    print("Nod")
+    robot.MoveHead(0, -10, 0, 100)
+    time.sleep(0.5)
+    robot.MoveHead(0, 10, 0, 100)
+    time.sleep(0.5)
+    robot.MoveHead(0, 0, 0, 100)
+
+def unsure(robot):
+    print("Unsure")
+    tilt(robot, "left")
+    set_expression(robot, "apprehension")
+    move_arms(robot, "both", "up")
+    time.sleep(1.5)
+    look(robot, "straight")
+    move_arms(robot, "both", "straight")
+    set_expression(robot, "DEFAULT")
+
+def celebrate(robot):
+    print("Celebrate")
+    tilt(robot, "left")
+    set_expression(robot, "admiration")
+    move_arms(robot, "right", "up")
+    move_arms(robot, "left", "down")
+    time.sleep(0.5)
+    tilt(robot, "right")
+    move_arms(robot, "right", "down")
+    move_arms(robot, "left", "up")
+    time.sleep(0.5)
+    look(robot, "straight")
+    set_expression(robot, "starryEyed")
+    move_arms(robot, "both", "straight")
+    time.sleep(1.0)
+    set_expression(robot, "DEFAULT")
+
+def laugh(robot):
+    print("Laughing")
+    set_expression(robot, "admiration")
+    robot.MoveHead(0, -25, 0, 100)
+    time.sleep(2.0)
+    look(robot, "straight")
+    set_expression(robot, "DEFAULT")
+
+def surprise(robot):
+    print("Surprise")
+    set_expression(robot, "surprise")
+    tilt(robot, "right")
+    move_arms(robot, "both", "up")
+    time.sleep(1.0)
+    look(robot, "straight")
+    move_arms(robot, "both", "straight")
+    set_expression(robot, "DEFAULT")
 
 # # # # # 
 
@@ -133,8 +167,9 @@ def main(misty_ip):
     # robot = None
     # robot = Robot(misty_ip)
     # misty_ip = '10.200.193.1'
+    global speech
     robot = Robot(misty_ip)
-    
+    speech = MistyGoogleTTS(robot)
     # av streaming source: https://github.com/CPsridharCP/MistySkills/blob/master/Apps/Teleop/02_pythonTeleop/mistyTeleop.py
     # robot.startAvStream(url='rtspd:1935', dimensions=(640, 480))
     # print("Starting Misty's camera")
@@ -143,7 +178,6 @@ def main(misty_ip):
     # if not(cap.isOpened()):
     #     print("cannot open rtsp")
         
-    robot.setDefaultVolume(20)
     
     video_feed = [
         [sg.Text("Video Feed", size=(10, 1), justification="center")],
@@ -160,7 +194,7 @@ def main(misty_ip):
     speak_input = [
         [sg.Text("Text to Speech")],
         [sg.Input(size=(50, 5), enable_events=True, key="-TTS-")],
-        [sg.Button("Speak", key = "SPEAK"), sg.Button("Clear", key = "CLEAR")]
+        [sg.Button("Speak", key = "SPEAK", bind_return_key=True), sg.Button("Clear", key = "CLEAR")]
     ]
 
     led_control = [
@@ -181,57 +215,47 @@ def main(misty_ip):
             sg.Button("Right Arm Straight", key = "RIGHT_ARM_STRAIGHT")]
     ]
 
+    macros = [
+        [sg.Text("Macros")],
+        [sg.Button("Nod", key = "NOD"),
+            sg.Button("IDK", key = "UNSURE"),
+            sg.Button("Celebrate", key = "CELEBRATE")],
+        [sg.Button("Laughing", key = "LAUGH"),
+            sg.Button("Surprise", key = "SURPRISE")
+        ]
+    ]
+
     # GUI drop down menu to change Misty face expression
     # resource: https://csveda.com/python-combo-and-listbox-with-pysimplegui/
     # enable_events=True means that when a drop down menu item
     # is selected, then the face changes automatically
     expression_list = [
         [sg.Text("Face Expression")],
-        [sg.Combo(["admiration",
-                   "aggressive",
+        [sg.Combo([
+                   "DEFAULT",
+                   "admiration",
                    "amazement",
                    "anger",
                    "apprehension",
                    "contempt",
                    "contentLeft",
                    "contentRight",
-                   "default",
-                   "disgust",
-                   "disorientated",
                    "fear",
                    "grief",
                    "hilarious",
-                   "joy1",
-                   "joy2",
-                   "joyGoofy1",
-                   "joyGoofy2",
-                   "joyGoofy3",
+                   "joy",
+                   "joyGoofy",
                    "love",
-                   "rage1",
-                   "rage2",
-                   "rage3",
-                   "rage4",
                    "remorse",
                    "sadness",
                    "sleeping",
-                   "sleepingZZZ",
-                   "sleepy1",
-                   "sleepy2",
-                   "sleepy3",
-                   "sleepy4",
+                   "sleepy",
                    "starryEyed",
                    "surprise",
                    "blackScreen",
                    "blinkingLarge",
-                   "blinkingStandard",
-                   "camera",
-                   "flash",
-                   "gearPrompt",
-                   "logoPrompt",
-                   "terror1",
-                   "terror2",
-                   "terrorLeft",
-                   "terrorRight"],
+                   "blinkingStandard"
+                   ],
                   enable_events=True, key = "my_expression")]
     ]
     
@@ -240,9 +264,6 @@ def main(misty_ip):
     #     [sg.Button("Listen", key = "LISTEN", enable_events=True)]
     # ]
 
-    # TODO: add display window for robot camera
-        # (this can be in the PySimpleGUI window, or in a separate window -- coder's choice :))
-        # https://docs.opencv.org/4.x/d6/d00/tutorial_py_root.html
 
     layout = [
         [sg.Column(video_feed),sg.VSeperator(),
@@ -251,7 +272,8 @@ def main(misty_ip):
                     # [sg.Column(voice_controls)],
                     [sg.Column(led_control)],
                     [sg.Column(arm_control)],
-                    [sg.Column(expression_list)]])]
+                    [sg.Column(expression_list)],
+                    [sg.Column(macros)]])]
     ]
 
     window = sg.Window("Misty UI", layout)
@@ -281,6 +303,13 @@ def main(misty_ip):
         "RIGHT_ARM_UP": lambda: move_arms(robot, 'right', "up"),
         "RIGHT_ARM_DOWN": lambda: move_arms(robot, 'right', "down"),
         "RIGHT_ARM_STRAIGHT": lambda: move_arms(robot, 'right', "straight"),
+        
+        "NOD": lambda: nod(robot),
+        "UNSURE": lambda: unsure(robot),
+        "CELEBRATE": lambda: celebrate(robot),
+
+        "LAUGH": lambda: laugh(robot),
+        "SURPRISE": lambda: surprise(robot),
     }
 
     while True:
@@ -296,10 +325,8 @@ def main(misty_ip):
             #print("TTS : ", values["-TTS-"])
             speak(robot, values["-TTS-"])
 
-        if event == "CLEAR":
+        if event == "CLEAR" or event == "SPEAK":
             window["-TTS-"].update("")
-
-        # TODO add event names for arms
 
         # event names for expression
         if event == "my_expression":
@@ -329,6 +356,6 @@ def main(misty_ip):
     window.close()
 
 if __name__ == "__main__":
-    misty_ip = misty_ip_scan()
-    # misty_ip = ""
+    # misty_ip = misty_ip_scan()
+    misty_ip = "10.203.212.70"
     main(misty_ip)
