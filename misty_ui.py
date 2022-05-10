@@ -35,11 +35,11 @@ def look(robot, direction):
 def led(robot, color):
     print("LED", color)
     if color == "red":
-        robot.changeLED(255, 0, 0)
+        robot.ChangeLED(255, 0, 0)
     elif color == "green":
-        robot.changeLED(0, 255, 0)
+        robot.ChangeLED(0, 255, 0)
     elif color == "blue":
-        robot.changeLED(0, 0, 255)
+        robot.ChangeLED(0, 0, 255)
 
 def speak(robot, ssml_string):
     print("Speak:", ssml_string)
